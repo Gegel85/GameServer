@@ -18,6 +18,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
         protected float _moveSpeed;
         protected Spell _originSpell;
         private Logger _logger = Program.ResolveDependency<Logger>();
+        private bool HitOnlyTarget = false;
 
         public Projectile(
             float x,
@@ -29,7 +30,8 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             float moveSpeed,
             string projectileName,
             int flags = 0,
-            uint netId = 0
+            uint netId = 0,
+            bool hitOnlyTarget = true
         ) : base(x, y, collisionRadius, 0, netId)
         {
             SpellData = _game.Config.ContentManager.GetSpellData(projectileName);
@@ -50,8 +52,13 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             {
                 ((GameObject)target).IncrementAttackerCount();
             }
-
+            HitOnlyTarget = hitOnlyTarget;
             owner.IncrementAttackerCount();
+        }
+
+        public void SetMoveSpeed(float ms)
+        {
+            _moveSpeed = ms;
         }
 
         public override void Update(float diff)
@@ -74,7 +81,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
             }
             else
             {
-                if (Target == collider)
+                if (!HitOnlyTarget || Target == collider)
                 {
                     CheckFlagsForUnit(collider as AttackableUnit);
                 }
@@ -93,7 +100,7 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Missiles
                 return;
             }
 
-            if (Target.IsSimpleTarget)
+            if ((!HitOnlyTarget && Target != unit) || Target.IsSimpleTarget)
             { // Skillshot
                 if (unit == null || ObjectsHit.Contains(unit))
                 {

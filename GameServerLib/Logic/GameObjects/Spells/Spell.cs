@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using LeagueSandbox.GameServer.Logic.API;
 using LeagueSandbox.GameServer.Logic.Content;
 using LeagueSandbox.GameServer.Logic.GameObjects.AttackableUnits;
@@ -228,11 +229,32 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             _spellGameScript.ApplyEffects(Owner, u, this, p);
         }
 
-        public void AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
+        public Projectile AddProjectile(string nameMissile, float toX, float toY, bool isServerOnly = false)
         {
             var p = new Projectile(
                 Owner.X,
-                Owner.Y,
+               Owner.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectile(string nameMissile, float toX, float toY, float startX, float startY, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                startX,
+                startY,
                 (int) SpellData.LineWidth,
                 Owner,
                 new Target(toX, toY),
@@ -246,9 +268,31 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             {
                 _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
+            return p;
         }
 
-        public void AddProjectileTarget(string nameMissile, Target target, bool isServerOnly = false)
+        public Projectile AddProjectile(string nameMissile, float toX, float toY, Vector2 start, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                start.X,
+                start.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                new Target(toX, toY),
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectileTarget(string nameMissile, Target target, bool isServerOnly = false)
         {
             var p = new Projectile(
                 Owner.X,
@@ -266,6 +310,115 @@ namespace LeagueSandbox.GameServer.Logic.GameObjects.Spells
             {
                 _game.PacketNotifier.NotifyProjectileSpawn(p);
             }
+            return p;
+        }
+
+        public Projectile AddProjectileTarget(string nameMissile, Target target, float startX, float startY, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                startX,
+                startY,
+                (int)SpellData.LineWidth,
+                Owner,
+                target,
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectileTarget(string nameMissile, Target target, Vector2 start, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                start.X,
+                start.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                target,
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectileHitAllTargets(string nameMissile, Target target, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                Owner.X,
+                Owner.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                target,
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags,
+                hitOnlyTarget: false
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectileHitAllTargets(string nameMissile, Target target, float startX, float startY, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                startX,
+                startY,
+                (int)SpellData.LineWidth,
+                Owner,
+                target,
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags,
+                hitOnlyTarget: false
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
+        }
+
+        public Projectile AddProjectileHitAllTargets(string nameMissile, Target target, Vector2 start, bool isServerOnly = false)
+        {
+            var p = new Projectile(
+                start.X,
+                start.Y,
+                (int)SpellData.LineWidth,
+                Owner,
+                target,
+                this,
+                SpellData.MissileSpeed,
+                nameMissile,
+                SpellData.Flags,
+                hitOnlyTarget: false
+            );
+            _game.ObjectManager.AddObject(p);
+            if (!isServerOnly)
+            {
+                _game.PacketNotifier.NotifyProjectileSpawn(p);
+            }
+            return p;
         }
 
         public void AddLaser(float toX, float toY, bool affectAsCastIsOver = true)
